@@ -1,0 +1,10 @@
+# List of source files containing translatable strings.
+# Please keep this list in alphabetic order.
+[encoding: UTF-8]
+[type: gettext/glade]data/main.ui
+[type: gettext/glade]data/progress.ui
+data/caja-sound-converter.schemas.in
+
+src/nsc-converter.c
+src/nsc-extension.c
+src/nsc-gstreamer.c

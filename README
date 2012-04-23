@@ -1,0 +1,27 @@
+Caja-Sound-Converter
+========================
+
+The Caja-Sound-Converter extension allows you to convert audio files 
+to different formats using the GStreamer framework.
+
+Tips:
+=====
+
+If you don't want to use the source directory as the default output
+destination, run the following:
+   mateconftool-2 --set /apps/caja-sound-converter/source_dir --type bool false
+
+Bug reporting:
+==============
+
+Please report bugs to:
+https://github.com/cygwinports/mate-file-manager-sound-converter/issues
+
+Hacking:
+========
+
+caja-sound-converter can be check out with the following command:
+
+git clone git://github.com/cygwinports/mate-file-manager-sound-converter.git
+
+Patches welcomed!

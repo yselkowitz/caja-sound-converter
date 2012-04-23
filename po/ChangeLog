@@ -1,0 +1,34 @@
+2010-06-19  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* de.po
+	Add german translation provided by Michael Kogan.
+
+2010-06-18  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* hu.po
+	Add hungarian translation provided by Peter Bojtos.
+
+2010-06-11  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* it.po
+	Add italian translation provided by Gianvito Cavasoli.
+
+2010-01-09  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* fr.po:
+	Add french translation provided by Christophe Perez.
+
+2010-01-03  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* sv.po:
+	Updated swedish translation provided by Daniel Nylander.
+
+2009-02-22  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* sv.po:
+	Add swedish translation provided by Daniel Nylander.
+
+2008-05-11  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* POTFILES.in: Mark xml files as glade files for translation.
+
