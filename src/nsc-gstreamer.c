@@ -320,14 +320,6 @@ error_cb (GstBus     *bus,
 	g_error_free (error);
 }
 
-static gboolean
-just_say_yes (GstElement *element,
-	      gpointer    filename,
-	      gpointer    user_data)
-{
-	return TRUE;
-}
-
 static void
 build_pipeline (NscGStreamer *gstreamer)
 {
@@ -390,14 +382,6 @@ build_pipeline (NscGStreamer *gstreamer)
 			     _("Could not create GStreamer file output"));
 		return;
 	}
-
-	/*
-	 * TODO: Eventually, we should ask the user if they want to 
-	 *       overwrite any existing file.
-	 */
-	g_signal_connect (G_OBJECT (priv->filesink), "allow-overwrite",
-			  G_CALLBACK (just_say_yes),
-			  gstreamer);
 
 	/* Add the elements to the pipeline */
 	gst_bin_add_many (GST_BIN (priv->pipeline),
