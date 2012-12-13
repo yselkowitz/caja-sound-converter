@@ -37,7 +37,7 @@
 #include "rb-gst-media-types.h"
 
 #define SOURCE_ENCODING_TARGET_FILE "../data/rhythmbox.gep"
-#define INSTALLED_ENCODING_TARGET_FILE DATADIR"/nautilus-sound-converter/rhythmbox.gep"
+#define INSTALLED_ENCODING_TARGET_FILE DATADIR"/caja-sound-converter/rhythmbox.gep"
 static GstEncodingTarget *default_target = NULL;
 
 char *

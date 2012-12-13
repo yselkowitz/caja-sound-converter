@@ -12,7 +12,8 @@ gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)
 builderdir = $(datadir)/caja-sound-converter
 builder_DATA =		\
 	main.ui		\
-	progress.ui
+	progress.ui	\
+	rhythmbox.gep
 	
 EXTRA_DIST =			\
 	$(builder_DATA)		\
