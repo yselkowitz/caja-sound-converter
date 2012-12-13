@@ -94,7 +94,7 @@ struct _NscConverterPrivate {
  * gsettings key for whether the user wants to use
  * the source directory for the output directory.
  */
-#define SOURCE_DIRECTORY "/org/mate/caja-sound-converter"
+#define SOURCE_DIRECTORY "org.mate.caja-sound-converter"
 
 #define NSC_CONVERTER_GET_PRIVATE(o)           \
 	((NscConverterPrivate *)((NSC_CONVERTER(o))->priv))
