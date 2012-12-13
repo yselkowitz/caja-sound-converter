@@ -9,7 +9,7 @@ Tips:
 
 If you don't want to use the source directory as the default output
 destination, run the following:
-   mateconftool-2 --set /apps/caja-sound-converter/source_dir --type bool false
+   gsettings set /org/mate/caja-sound-converter source-dir false
 
 Bug reporting:
 ==============

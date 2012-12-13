@@ -1,0 +1,9 @@
+<schemalist>
+  <schema id="org.mate.caja-sound-converter" path="/org/mate/caja-sound-converter/" gettext-domain="caja-sound-converter">
+    <key name="source-dir" type="b">
+      <default>true</default>
+      <summary>Use source directory as output directory</summary>
+      <description>Use the source directory as the default output directory.</description>
+    </key>
+  </schema>
+</schemalist>

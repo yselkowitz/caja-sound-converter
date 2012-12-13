@@ -19,7 +19,8 @@ config.h
 config.log
 config.status
 data/Makefile
-data/*.schemas
+data/*.gschema.valid
+data/*.gschema.xml
 libtool
 /m4
 po/.intltool-merge-cache

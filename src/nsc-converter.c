@@ -29,8 +29,8 @@
 #include <sys/time.h>
 #include <string.h>
 
-#include <mateconf/mateconf-client.h>
 #include <glib/gi18n.h>
+#include <gio/gio.h>
 #include <gtk/gtk.h>
 #include <gst/gst.h>
 #include <libcaja-extension/caja-file-info.h>
@@ -91,10 +91,10 @@ struct _NscConverterPrivate {
 #define DEFAULT_MEDIA_TYPE "audio/x-vorbis"
 
 /*
- * mateconf key for whether the user wants to use
+ * gsettings key for whether the user wants to use
  * the source directory for the output directory.
  */
-#define SOURCE_DIRECTORY "/apps/caja-sound-converter/source_dir"
+#define SOURCE_DIRECTORY "/org/mate/caja-sound-converter"
 
 #define NSC_CONVERTER_GET_PRIVATE(o)           \
 	((NscConverterPrivate *)((NSC_CONVERTER(o))->priv))
@@ -770,8 +770,7 @@ nsc_converter_init (NscConverter *self)
 	/* If correctly allocated, initialize parameters */
 	if ((NSC_CONVERTER (self))->priv != NULL) {
 		NscConverterPrivate *priv = NSC_CONVERTER_GET_PRIVATE (self);
-		MateConfClient         *mateconf;
-		GError              *error = NULL;
+		GSettings           *gsettings;
 
 		/* Set init values */
 		priv->gst = NULL;
@@ -780,27 +779,17 @@ nsc_converter_init (NscConverter *self)
 		priv->total_duration = 0;
 		priv->before.seconds = -1;
 
-		/* Get mateconf client */
-		mateconf = mateconf_client_get_default ();
-		if (mateconf == NULL) {
+		/* Get GSettings client */
+		gsettings = g_settings_new (SOURCE_DIRECTORY);
+		if (gsettings == NULL) {
 			/* Should probably do more than just give a warning */
-			g_warning (_("Could not create MateConf client.\n"));
+			g_warning (_("Could not create GSettings client.\n"));
 		}
 
-		priv->src_dir = mateconf_client_get_bool (mateconf,
-						       SOURCE_DIRECTORY,
-						       &error);
+		priv->src_dir = g_settings_get_boolean (gsettings, "source-dir");
 
-		if (error) {
-			priv->src_dir = FALSE;
-			g_error_free (error);
-		}
-
-		/* Init mate-media-profiles */
-		mate_media_profiles_init (mateconf);
-
-		/* Unreference the mateconf client */
-		g_object_unref (mateconf);
+		/* Unreference the gsettings client */
+		g_object_unref (gsettings);
 
 		/* Set the profile to the default. */
 		priv->profile = rb_gst_get_encoding_profile (DEFAULT_MEDIA_TYPE);

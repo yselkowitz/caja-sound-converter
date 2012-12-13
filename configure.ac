@@ -19,8 +19,7 @@ IT_PROG_INTLTOOL([0.35.0])
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 
-AC_PATH_PROG(MATECONFTOOL, mateconftool-2)
-AM_MATECONF_SOURCE_2
+GLIB_GSETTINGS
 
 MATE_COMPILE_WARNINGS([maximum])
 MATE_CXX_WARNINGS
@@ -30,9 +29,8 @@ MATE_MAINTAINER_MODE_DEFINES
 dnl -----------------------------------------------------------
 dnl Set variables for minimum versions needed.
 dnl -----------------------------------------------------------
-GLIB_REQUIRED=2.16.0
+GLIB_REQUIRED=2.26.0
 CAJA_REQUIRED=1.2.0
-MATECONF_REQUIRED=1.2.0
 GTK_REQUIRED=2.16.0
 GSTREAMER_REQUIRED=1.0.0
 
@@ -42,7 +40,7 @@ dnl -----------------------------------------------------------
 PKG_CHECK_MODULES(NSC,
 [
 	glib-2.0 >= $GLIB_REQUIRED
-	mateconf-2.0 >= $MATECONF_REQUIRED
+	gio-2.0
 	libcaja-extension >= $CAJA_REQUIRED
 	gtk+-2.0 >= $GTK_REQUIRED
 	gstreamer-1.0 >= $GSTREAMER_REQUIRED
