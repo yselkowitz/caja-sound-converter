@@ -22,7 +22,7 @@
 #ifndef __NSC_XML_H__
 #define __NSC_XML_H__
 
-#include <glib/gtypes.h>
+#include <glib.h>
 
 gboolean    nsc_xml_get_file (const gchar *filename,
 			      const gchar *first_widget,

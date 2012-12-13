@@ -27,7 +27,7 @@
 #define NSC_GSTREAMER_H
 
 #include <gio/gio.h>
-#include <glib/gmacros.h>
+#include <glib.h>
 #include <glib-object.h>
 #include <profiles/audio-profile.h>
 
