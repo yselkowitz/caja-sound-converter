@@ -1,4 +1,4 @@
-AC_INIT([caja-sound-converter], [1.2.0],
+AC_INIT([caja-sound-converter], [1.5.0],
         [https://github.com/cygwinports/mate-file-manager-sound-converter/issues],
         [mate-file-manager-sound-converter])
 AC_PREREQ([2.59])
