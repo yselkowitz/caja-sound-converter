@@ -1,7 +1,7 @@
 /*
  *  nsc-gstreamer.h
  * 
- *  Copyright (C) 2008-2009 Brian Pepple
+ *  Copyright (C) 2008-2012 Brian Pepple
  *  Copyright (C) 2003 Ross Burton <ross@burtonini.com>
  *
  *  This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib-object.h>
-#include <profiles/audio-profile.h>
+#include <gst/pbutils/encoding-profile.h>
 
 G_BEGIN_DECLS
 
@@ -58,13 +58,13 @@ typedef struct {
 } NscGStreamerClass;
 
 GType         nsc_gstreamer_get_type          (void);
-NscGStreamer *nsc_gstreamer_new               (GMAudioProfile  *profile);
+NscGStreamer *nsc_gstreamer_new               (GstEncodingProfile  *profile);
 void          nsc_gstreamer_convert_file      (NscGStreamer    *gstreamer,
 					       GFile           *src,
 					       GFile           *sink,
 					       GError         **error);
 void          nsc_gstreamer_cancel_convert    (NscGStreamer    *gstreamer);
-gboolean      nsc_gstreamer_supports_profile  (GMAudioProfile  *profile);
+gboolean      nsc_gstreamer_supports_profile  (GstEncodingProfile  *profile);
 gboolean      nsc_gstreamer_supports_mp3      (GError         **error);
 gboolean      nsc_gstreamer_supports_wav      (GError         **error);
 gboolean      nsc_gstreamer_supports_aac      (GError         **error);

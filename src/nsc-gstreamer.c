@@ -2,7 +2,7 @@
 /*
  *  nsc-gstreamer.c
  * 
- *  Copyright (C) 2008-2010 Brian Pepple
+ *  Copyright (C) 2008-2012 Brian Pepple
  *  Copyright (C) 2003-2007 Ross Burton <ross@burtonini.com>
  *
  *  This library is free software; you can redistribute it and/or
@@ -31,10 +31,10 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include <gst/gst.h>
-#include <profiles/mate-media-profiles.h>
 
 #include "nsc-error.h"
 #include "nsc-gstreamer.h"
+#include "rb-gst-media-types.h"
 
 /* Properties */
 enum {
@@ -59,7 +59,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 
 struct NscGStreamerPrivate {
 	/* The current audio profile */
-	GMAudioProfile *profile;
+	GstEncodingProfile *profile;
 
 	/* If the pipeline needs to be re-created */
 	gboolean        rebuild_pipeline;
@@ -68,6 +68,8 @@ struct NscGStreamerPrivate {
 	GstElement     *pipeline;
 	GstElement     *filesrc;
 	GstElement     *decode;
+	GstElement     *audioconvert;
+	GstElement     *audioresample;
 	GstElement     *encode;
 	GstElement     *filesink;
 
@@ -93,13 +95,15 @@ nsc_gstreamer_set_property (GObject      *object,
 {
 	NscGStreamer        *self = NSC_GSTREAMER (object);
 	NscGStreamerPrivate *priv = NSC_GSTREAMER_GET_PRIVATE (self);
+	GstEncodingProfile  *profile;
 
 	switch (property_id) {
 	case PROP_PROFILE:
 		if (priv->profile)
-			g_object_unref (priv->profile);
+			gst_encoding_profile_unref (priv->profile);
 
-		priv->profile = GM_AUDIO_PROFILE (g_value_dup_object (value));
+		profile = GST_ENCODING_PROFILE (g_value_get_pointer (value));
+		priv->profile = GST_ENCODING_PROFILE (gst_encoding_profile_ref (profile));
 		priv->rebuild_pipeline = TRUE;
 
 		g_object_notify (object, "profile");
@@ -120,7 +124,7 @@ nsc_gstreamer_get_property (GObject    *object,
 
 	switch (property_id) {
 	case PROP_PROFILE:
-		g_value_set_object (value, priv->profile);
+		g_value_set_pointer (value, gst_encoding_profile_ref (priv->profile));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -136,7 +140,7 @@ nsc_gstreamer_dispose (GObject *object)
 	/* Check if not NULL! To avoid calling dispose multiple times */
 	if (priv != NULL) {
 		if (priv->profile) {
-			g_object_unref (priv->profile);
+			gst_encoding_profile_unref (priv->profile);
 			priv->profile = NULL;
 		}
 
@@ -188,11 +192,10 @@ nsc_gstreamer_class_init (NscGStreamerClass *klass)
 
 	/* Properties */
 	g_object_class_install_property (object_class, PROP_PROFILE,
-					 g_param_spec_object ("profile",
-							      _("Audio Profile"),
-							      _("The MATE Audio Profile used for encoding audio"),
-							      GM_AUDIO_TYPE_PROFILE,
-							      G_PARAM_READWRITE));
+					 g_param_spec_pointer ("profile",
+							       _("Audio Profile"),
+							       _("The GStreamer Encoding Profile used for encoding audio"),
+							       G_PARAM_READWRITE));
 
 	/* Signals */
 	signals[PROGRESS] = 
@@ -274,20 +277,21 @@ static GstElement*
 build_encoder (NscGStreamer *gstreamer)
 {
 	NscGStreamerPrivate *priv;
-	GstElement          *element = NULL;
-	gchar               *pipeline;
+	GstElement          *encodebin;
 
 	g_return_val_if_fail (NSC_IS_GSTREAMER (gstreamer), NULL);
 
 	priv = NSC_GSTREAMER_GET_PRIVATE (gstreamer);
 	g_return_val_if_fail (priv->profile != NULL, NULL);
 
-	pipeline = g_strdup_printf ("audioconvert ! audioresample ! %s",
-				    gm_audio_profile_get_pipeline (priv->profile));
-	element = gst_parse_bin_from_description (pipeline, TRUE, NULL);
-	g_free (pipeline);
+	encodebin = gst_element_factory_make ("encodebin", NULL);
+	if (encodebin == NULL)
+		return NULL;
 
-	return element;
+	g_object_set (encodebin, "profile", priv->profile, NULL);
+	g_object_set (encodebin, "queue-time-max", 120 * GST_SECOND, NULL);
+
+	return encodebin;
 }
 
 static void
@@ -323,28 +327,6 @@ just_say_yes (GstElement *element,
 {
 	return TRUE;
 }
-
-/* Callback for when decodebin exposes a source pad */
-static void
-connect_decodebin_cb (GstElement *decodebin,
-		      GstPad     *pad,
-		      gboolean    last,
-		      gpointer    data)
-{
-        GstPad *audiopad;
-
-        /* Only link once */
-        audiopad = gst_element_get_pad (data, "sink");
-        if (GST_PAD_IS_LINKED (audiopad)) {
-                g_object_unref (audiopad);
-                return;
-        }
-
-        if (gst_pad_link (pad, audiopad) != GST_PAD_LINK_OK) {
-                g_print ("Failed to link elements decodebin-encode\n");
-        }
-}
-
 
 static void
 build_pipeline (NscGStreamer *gstreamer)
@@ -382,7 +364,7 @@ build_pipeline (NscGStreamer *gstreamer)
 	}
 
 	/* Decode */
-	priv->decode = gst_element_factory_make ("decodebin", "decode");
+	priv->decode = gst_element_factory_make ("decodebin", NULL);
 	if (priv->decode == NULL) {
 		g_set_error (&priv->construct_error,
 			     NSC_ERROR, NSC_ERROR_INTERNAL_ERROR,
@@ -396,14 +378,9 @@ build_pipeline (NscGStreamer *gstreamer)
 		g_set_error (&priv->construct_error,
 			     NSC_ERROR, NSC_ERROR_INTERNAL_ERROR,
 			     _("Could not create GStreamer encoders for %s"),
-			     gm_audio_profile_get_name (priv->profile));
+			     gst_encoding_profile_get_name (priv->profile));
 		return;
 	}
-
-	/* Decodebin uses dynamic pads, so lets set up a callback. */
-	g_signal_connect (G_OBJECT (priv->decode), "new-decoded-pad",
-			  G_CALLBACK (connect_decodebin_cb),
-			  priv->encode);
 
 	/* Write to disk */
 	priv->filesink = gst_element_factory_make (FILE_SINK, "file_sink");
@@ -455,16 +432,15 @@ tick_timeout_cb (NscGStreamer *gstreamer)
 	gint                 secs;
 	GstState             state;
 	GstState             pending_state;
-	static GstFormat     format = GST_FORMAT_TIME;
 
 	g_return_val_if_fail (NSC_IS_GSTREAMER (gstreamer), FALSE);
 
 	priv = NSC_GSTREAMER_GET_PRIVATE (gstreamer);
 
 	gst_element_get_state (priv->pipeline,
-			       &state,
-			       &pending_state,
-			       0);
+						   &state,
+						   &pending_state,
+						   0);
 
 	if (state != GST_STATE_PLAYING &&
 	    pending_state != GST_STATE_PLAYING) {
@@ -473,7 +449,7 @@ tick_timeout_cb (NscGStreamer *gstreamer)
 	}
 
 	if (!gst_element_query_position (priv->pipeline,
-					 &format,
+					 GST_FORMAT_TIME,
 					 &nanos)) {
 		g_warning (_("Could not get current file position"));
 		return TRUE;
@@ -491,7 +467,7 @@ tick_timeout_cb (NscGStreamer *gstreamer)
  * Public Methods
  */
 NscGStreamer *
-nsc_gstreamer_new (GMAudioProfile *profile)
+nsc_gstreamer_new (GstEncodingProfile *profile)
 {
 	return g_object_new (NSC_TYPE_GSTREAMER, "profile", profile, NULL);
 }
@@ -505,7 +481,6 @@ nsc_gstreamer_convert_file (NscGStreamer *gstreamer,
 	GstStateChangeReturn  state_ret;
 	NscGStreamerPrivate  *priv;
 	gint64                nanos;
-	static GstFormat      format = GST_FORMAT_TIME;
 
 	g_return_if_fail (NSC_IS_GSTREAMER (gstreamer));
 
@@ -575,7 +550,7 @@ nsc_gstreamer_convert_file (NscGStreamer *gstreamer,
 	}
 
 	/* Get file duration */
-	if (!gst_element_query_duration (priv->pipeline, &format, &nanos)) {
+	if (!gst_element_query_duration (priv->pipeline, GST_FORMAT_TIME, &nanos)) {
 		g_warning (_("Could not get current file duration"));
 	} else {
 		gint secs;
@@ -723,36 +698,8 @@ nsc_gstreamer_supports_wma (GError **error)
 }
 
 gboolean
-nsc_gstreamer_supports_profile (GMAudioProfile *profile)
+nsc_gstreamer_supports_profile (GstEncodingProfile *profile)
 {
-	GstElement *element;
-	GError     *error = NULL;
-	gchar      *pipeline;
-
-	pipeline = g_strdup_printf ("fakesrc ! %s",
-				    gm_audio_profile_get_pipeline (profile));
-	element = gst_parse_launch (pipeline, &error);
-	g_free (pipeline);
-
-	/*
-	 * It is possible for both element and error to be non NULL,
-	 * so let's check both.
-	 */
-	if (element) {
-		gst_object_unref (GST_OBJECT (element));
-
-		if (error) {
-			g_warning ("Profile warning; %s", error->message);
-			g_error_free (error);
-		}
-
-		return TRUE;
-	} else {
-		if (error) {
-			g_warning ("Profile error: %s", error->message);
-			g_error_free (error);
-		}
-
-		return FALSE;
-	}
+    /* TODO: take a GError to return a message if the profile isn't supported */
+	return !rb_gst_check_missing_plugins(profile, NULL, NULL);
 }

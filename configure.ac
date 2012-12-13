@@ -34,8 +34,7 @@ GLIB_REQUIRED=2.16.0
 CAJA_REQUIRED=1.2.0
 MATECONF_REQUIRED=1.2.0
 GTK_REQUIRED=2.16.0
-GSTREAMER_REQUIRED=0.10.20
-MATE_MEDIA_PROFILES_REQUIRED=1.2.0
+GSTREAMER_REQUIRED=1.0.0
 
 dnl -----------------------------------------------------------
 dnl Check for required libraries
@@ -46,8 +45,9 @@ PKG_CHECK_MODULES(NSC,
 	mateconf-2.0 >= $MATECONF_REQUIRED
 	libcaja-extension >= $CAJA_REQUIRED
 	gtk+-2.0 >= $GTK_REQUIRED
-	gstreamer-0.10 >= $GSTREAMER_REQUIRED
-	mate-media-profiles >= $MATE_MEDIA_PROFILES_REQUIRED
+	gstreamer-1.0 >= $GSTREAMER_REQUIRED
+	gstreamer-pbutils-1.0
+	gstreamer-plugins-base-1.0
 ])
 AC_SUBST(NSC_CFLAGS)
 AC_SUBST(NSC_LIBS)
@@ -71,17 +71,17 @@ dnl -----------------------------------------------------------
 dnl Find the GStreamer elements we use, and warn if they are
 dnl not present.
 dnl -----------------------------------------------------------
-AM_GST_ELEMENT_CHECK(vorbisdec,,AC_MSG_WARN([The 'vorbisdec' element was not found. This will cause decoding from Ogg Vorbis to fail.]))
-AM_GST_ELEMENT_CHECK(vorbisenc,,AC_MSG_WARN([The 'vorbisenc' element was not found. This will cause encoding to Ogg Vorbis to fail.]))
-AM_GST_ELEMENT_CHECK(flacdec,,AC_MSG_WARN([The 'flacdec' element was not found. This will cause decoding from FLAC to fail.]))
-AM_GST_ELEMENT_CHECK(flacenc,,AC_MSG_WARN([The 'flacenc' element was not found. This will cause encoding to FLAC to fail.]))
-AM_GST_ELEMENT_CHECK(wavpackenc,,AC_MSG_WARN([The 'wavpackenc' element was not found. This will cause encoding from Wav to fail.]))
-AM_GST_ELEMENT_CHECK(wavpackdec,,AC_MSG_WARN([The 'wavpackdec' element was not found. This will cause decoding to Wav to fail.]))
-AM_GST_ELEMENT_CHECK(giosink,,AC_MSG_WARN([The 'giosink' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
-AM_GST_ELEMENT_CHECK(giosrc,,AC_MSG_WARN([The 'giosrc' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
-AM_GST_ELEMENT_CHECK(decodebin,,AC_MSG_WARN([The 'decodebin' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
-AM_GST_ELEMENT_CHECK(audioresample,,AC_MSG_WARN([The 'audioresample' element was not found.  This will cause Caja-Sound-Converter to fail at runtime.]))
-AM_GST_ELEMENT_CHECK(audioconvert,,AC_MSG_WARN([The 'audioconvert' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
+GST_ELEMENT_CHECK(vorbisdec,1.0,,AC_MSG_WARN([The 'vorbisdec' element was not found. This will cause decoding from Ogg Vorbis to fail.]))
+GST_ELEMENT_CHECK(vorbisenc,1.0,,AC_MSG_WARN([The 'vorbisenc' element was not found. This will cause encoding to Ogg Vorbis to fail.]))
+GST_ELEMENT_CHECK(flacdec,1.0,,AC_MSG_WARN([The 'flacdec' element was not found. This will cause decoding from FLAC to fail.]))
+GST_ELEMENT_CHECK(flacenc,1.0,,AC_MSG_WARN([The 'flacenc' element was not found. This will cause encoding to FLAC to fail.]))
+GST_ELEMENT_CHECK(wavpackenc,1.0,,AC_MSG_WARN([The 'wavpackenc' element was not found. This will cause encoding from Wav to fail.]))
+GST_ELEMENT_CHECK(wavpackdec,1.0,,AC_MSG_WARN([The 'wavpackdec' element was not found. This will cause decoding to Wav to fail.]))
+GST_ELEMENT_CHECK(giosink,1.0,,AC_MSG_WARN([The 'giosink' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
+GST_ELEMENT_CHECK(giosrc,1.0,,AC_MSG_WARN([The 'giosrc' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
+GST_ELEMENT_CHECK(decodebin,1.0,,AC_MSG_WARN([The 'decodebin' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
+GST_ELEMENT_CHECK(audioresample,1.0,,AC_MSG_WARN([The 'audioresample' element was not found.  This will cause Caja-Sound-Converter to fail at runtime.]))
+GST_ELEMENT_CHECK(audioconvert,1.0,,AC_MSG_WARN([The 'audioconvert' element was not found. This will cause Caja-Sound-Converter to fail at runtime.]))
 
 
 dnl -----------------------------------------------------------
