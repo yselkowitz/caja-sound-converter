@@ -6,43 +6,35 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: caja-sound-converter master\n"
-"Report-Msgid-Bugs-To: http://github.com/cygwinports/mate-file-manager-sound-converter/issues"
-"product=caja-sound-converter\n"
-"POT-Creation-Date: 2010-12-27 08:17+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-27 16:09+0100\n"
 "PO-Revision-Date: 2010-12-27 16:14+0800\n"
 "Last-Translator: lainme <lainme993@gmail.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../data/main.ui.h:1
-msgid "<b>Destination</b>"
-msgstr "<b>目标文件夹</b>"
-
-#: ../data/main.ui.h:2
-msgid "<b>Format</b>"
-msgstr "<b>格式</b>"
-
-#: ../data/main.ui.h:3
 msgid "Convert Audio File"
 msgstr "转换音频文件"
 
-#: ../data/main.ui.h:4
+#: ../data/main.ui.h:2
 msgid "Select A Folder"
 msgstr "选择一个文件夹"
+
+#: ../data/main.ui.h:3
+msgid "<b>Destination</b>"
+msgstr "<b>目标文件夹</b>"
+
+#: ../data/main.ui.h:4
+msgid "<b>Format</b>"
+msgstr "<b>格式</b>"
 
 #: ../data/progress.ui.h:1
 msgid "Converting Progress"
 msgstr "转换进度"
-
-#: ../data/caja-sound-converter.schemas.in.h:1
-msgid "Use source directory as output directory"
-msgstr "使用源目录作为输出目录"
-
-#: ../data/caja-sound-converter.schemas.in.h:2
-msgid "Use the source directory as the default output directory."
-msgstr "使用源目录作为默认输出目录。"
 
 #: ../src/nsc-converter.c:338
 #, c-format
@@ -58,7 +50,7 @@ msgstr ""
 "Caja 音频转换器无法转换这个文件。\n"
 "原因：%s"
 
-#: ../src/nsc-converter.c:402 ../src/nsc-converter.c:618
+#: ../src/nsc-converter.c:402 ../src/nsc-converter.c:630
 msgid "Speed: Unknown"
 msgstr "速度：未知"
 
@@ -71,14 +63,10 @@ msgstr "估计的剩余时间：%d:%02d (在 %0.1fx)"
 msgid "Estimated time left: unknown"
 msgstr "估计的剩余时间：未知"
 
-#. Create edit profile button
-#: ../src/nsc-converter.c:694
-msgid "Edit _Profiles..."
-msgstr "编辑配置文件(_P)..."
-
 #. Should probably do more than just give a warning
-#: ../src/nsc-converter.c:741
-msgid "Could not create MateConf client.\n"
+#: ../src/nsc-converter.c:786
+#, fuzzy
+msgid "Could not create GSettings client.\n"
 msgstr "无法创建 MateConf 客户端。\n"
 
 #: ../src/nsc-extension.c:166
@@ -89,63 +77,64 @@ msgstr "转换(_C)..."
 msgid "Convert each selected audio file"
 msgstr "转换每个选择的音频文件"
 
-#: ../src/nsc-gstreamer.c:193
+#: ../src/nsc-gstreamer.c:196
 msgid "Audio Profile"
 msgstr "音频配置文件"
 
-#: ../src/nsc-gstreamer.c:194
-msgid "The GNOME Audio Profile used for encoding audio"
+#: ../src/nsc-gstreamer.c:197
+#, fuzzy
+msgid "The GStreamer Encoding Profile used for encoding audio"
 msgstr "用来编码音频的 GNOME 音频配置文件"
 
-#: ../src/nsc-gstreamer.c:381 ../src/nsc-gstreamer.c:390
+#: ../src/nsc-gstreamer.c:354 ../src/nsc-gstreamer.c:363
 #, c-format
 msgid "Could not create GStreamer file input"
 msgstr "无法创建 GStreamer 文件输入"
 
-#: ../src/nsc-gstreamer.c:399
+#: ../src/nsc-gstreamer.c:372
 #, c-format
 msgid "Could not create GStreamer encoders for %s"
 msgstr "无法为 %s 创建 GStreamer 编码器"
 
-#: ../src/nsc-gstreamer.c:414
+#: ../src/nsc-gstreamer.c:382
 #, c-format
 msgid "Could not create GStreamer file output"
 msgstr "无法创建 GStreamer 文件输出"
 
-#: ../src/nsc-gstreamer.c:436 ../src/nsc-gstreamer.c:444
+#: ../src/nsc-gstreamer.c:396 ../src/nsc-gstreamer.c:404
 #, c-format
 msgid "Could not link pipeline"
 msgstr "无法连接管道"
 
-#: ../src/nsc-gstreamer.c:479
+#: ../src/nsc-gstreamer.c:438
 msgid "Could not get current file position"
 msgstr "无法获取当前文件位置"
 
-#: ../src/nsc-gstreamer.c:580
+#: ../src/nsc-gstreamer.c:538
 msgid "Could not get current file duration"
 msgstr "无法获取当前文件持续时间"
 
-#: ../src/nsc-gstreamer.c:648
+#: ../src/nsc-gstreamer.c:606
 #, c-format
 msgid "The plugin necessary for mp3 file access was not found"
 msgstr "处理 mp3 文件需要的插件没有找到"
 
-#: ../src/nsc-gstreamer.c:665
+#: ../src/nsc-gstreamer.c:623
 #, c-format
 msgid "The plugin necessary for wav file access was not found"
 msgstr "处理 wav 文件需要的插件没有找到"
 
-#: ../src/nsc-gstreamer.c:683
+#: ../src/nsc-gstreamer.c:641
 #, c-format
 msgid "The plugin necessary for aac file access was not found"
 msgstr "处理 aac 文件需要的插件没有找到"
 
-#: ../src/nsc-gstreamer.c:700
+#: ../src/nsc-gstreamer.c:658
 #, c-format
 msgid "The plugin necessary for musepack file access was not found"
 msgstr "处理 musepack 文件需要的插件没有找到"
 
-#: ../src/nsc-gstreamer.c:717
+#: ../src/nsc-gstreamer.c:675
 #, c-format
 msgid "The plugin necessary for wma file access was not found"
 msgstr "处理 wma 文件需要的插件没有找到"
